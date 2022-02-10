@@ -1,0 +1,15 @@
+
+{% extends 'tyre_stock/base.html' %}
+{% block body_block %}
+{% load static %}
+
+<div class="jumbotron">
+
+  <h4>Enter correct email id</h4>
+  <p><a class='btn btn-warning' href="{% url 'customers:customer_order_view' %}">Go back to order page</a></p>
+
+</div>
+
+
+
+{% endblock%}

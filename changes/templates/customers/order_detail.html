@@ -1,0 +1,72 @@
+{% extends 'tyre_stock/base.html' %}
+{% block body_block %}
+{% load static %}
+
+
+<div class="container-fluid">
+
+
+
+  <div class="jumbotron">
+
+      <div id="d">
+
+      <img src="{% static 'photo/jk_tyre.jpg' %}" alt="Oops couldn't load the image" style="display: block;margin-left: auto;margin-right: auto;width: 40%; height:80%" >
+      <br>
+      <h3 style="display: block">Prem Tyres</h3>
+
+      <h4>Name of customer: {{order_detail.customer_name}}</h4>
+      <h4>Customer's company name: {{order_detail.company_name}}</h4>
+      <h4>Date: {{order_detail.date}}</h4>
+      <h5>Tyre model: {{order_detail.tyre_model}}</h5>
+      <h5>Tyre number: {{order_detail.tyre_number}}</h5>
+      <h5>Number of tyres bought: {{order_detail.quantity}}</h5>
+      {% if order_detail.fitment_position %}
+      <h5>Fitment position: {{order_detail.fitment_position}}</h5>
+      {% endif %}
+      {% if order_detail.mail_id %}
+      <h5>Email ID: {{order_detail.mail_id}}</h5>
+      {% endif %}
+      {% if order_detail.phone_number %}
+      <h5>Phone Number: {{order_detail.phone_number}}</h5>
+      {% endif %}
+      <h5>Vehicle number: {{order_detail.vehicle_number}}</h5>
+      <h5>Method of Payment: {{order_detail.payment_method}}</h5>
+      <h5>Paid? {{order_detail.payment_done}}</h5>
+      <h5>Location: {{order_detail.location}}</h5>
+
+      </div>
+      <br>
+
+      <p><input class="btn btn-primary" type="button" value="Generate Report"
+              id="btPrint" onclick="Export()" /></p>
+      <p><a class='btn btn-warning' href="{% url 'customers:order_update' pk=order_detail.pk %}">Update</a></p>
+      <p><a class='btn btn-danger' href="{% url 'customers:order_delete' pk=order_detail.pk %}">Delete</a></p>
+  </div>
+</div>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.22/pdfmake.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+<script type="text/javascript">
+    function Export() {
+        html2canvas(document.getElementById('d'), {
+            onrendered: function (canvas) {
+                var data = canvas.toDataURL();
+                var docDefinition = {
+                    content: [{
+                        image: data,
+                        width: 500
+                    }]
+                };
+                pdfMake.createPdf(docDefinition).download("Order_detail.pdf");
+            }
+        });
+    }
+</script>
+
+<style>
+  h3 {text-align: center;}
+</style>
+
+
+{% endblock %}

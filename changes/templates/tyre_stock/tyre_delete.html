@@ -1,0 +1,11 @@
+{% extends 'tyre_stock/base.html' %}
+{% block body_block %}
+
+<h1>Delete {{tyre_delete.tyre_name}}</h1>
+<form method="post">
+  {% csrf_token %}
+  <input type="submit" class="btn btn-danger" value="Delete">
+  <a href="{% url 'tyre_stock:tyre_detail' pk=tyre_delete.pk %}">Cancel</a>
+</form>
+
+{% endblock%}

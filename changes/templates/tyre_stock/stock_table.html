@@ -1,0 +1,120 @@
+
+
+{% extends 'tyre_stock/base.html' %}
+{% block body_block %}
+{% load static %}
+
+<div class="container-fluid">
+      <br><br><br>
+
+<!--          <form method="get">
+            <h4>Filter</h4>
+            {{ filter.form.as_ul }}
+            <input type="submit" name="" value="Search">
+          </form>
+-->
+
+
+        <div class="jumbotron">
+
+          <h2 align="center">Inventory</h2>
+
+          <button id="ex" class="btn btn-primary" onclick="tableToExcel(
+              't')">
+              Export to Excel
+          </button>
+
+          <input class="btn btn-warning" type="button" value="Create PDF"
+                  id="btPrint" onclick="Export()" />
+
+          <button type="button" class="btn btn-light" data-toggle="collapse" data-target="#fil"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path fill-rule="evenodd" d="M11.5 7a4.499 4.499 0 11-8.998 0A4.499 4.499 0 0111.5 7zm-.82 4.74a6 6 0 111.06-1.06l3.04 3.04a.75.75 0 11-1.06 1.06l-3.04-3.04z"></path></svg></button>
+              <div id="fil" class="collapse">
+                <br><br>
+                  <form method="get">
+                      <h4>Filter</h4>
+                      {{ filter.form.as_ul }}
+                      <input type="submit" name="" value="Search">
+                    </form>
+                </div>
+
+
+          <br><br>
+
+
+
+      {% if tyre_list %}
+
+              <table id='t'>
+                <thead>
+                  <th>Name of tyre</th>
+                  <th>Number of tyres currently available</th>
+                  <th>Price (in rupees)</th>
+                  <th>Date modified</th>
+                </thead>
+
+                {% for t in filter.qs %}
+                  {% if t.number_of_tyres <= t.reorder_number %}
+                    <tr style="background-color:#FF0000">
+
+                      <td onclick="location.href='tyres/{{t.id}}'">{{t.tyre_name}}</td>
+                      <td>{{t.number_of_tyres}}</td>
+                      <td>{{t.price}}</td>
+                      <td>{{t.date_refreshed}}</td>
+                    </tr>
+                  {% else %}
+                    <tr>
+                      <td onclick="location.href='tyres/{{t.id}}'">{{t.tyre_name}}</td>
+                      <td>{{t.number_of_tyres}}</td>
+                      <td>{{t.price}}</td>
+                      <td>{{t.date_refreshed}}</td>
+                    </tr>
+
+                  {% endif %}
+                {% endfor %}
+                </table>
+
+
+
+    {% else %}
+    <h3>Seems like something is not okay!</h3>
+  </div>
+
+{% endif %}
+<br><br>
+<h5>Total number of tyres: {{x}}</h5>
+
+<br>
+<p><a class='btn btn-dark' href="{% url 'tyre_stock:tyre_create' %}">Add new tyre</a></p>
+</div>
+
+
+
+
+<script>
+ $("#ex").click(function () {
+    $("#t").table2excel({
+        filename: "Tyre_stock.xls"
+    });
+ });
+</script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.22/pdfmake.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+<script type="text/javascript">
+    function Export() {
+        html2canvas(document.getElementById('t'), {
+            onrendered: function (canvas) {
+                var data = canvas.toDataURL();
+                var docDefinition = {
+                    content: [{
+                        image: data,
+                        width: 500
+                    }]
+                };
+                pdfMake.createPdf(docDefinition).download("Tyre_stock.pdf");
+            }
+        });
+    }
+</script>
+
+{% endblock%}

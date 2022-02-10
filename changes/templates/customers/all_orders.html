@@ -1,0 +1,125 @@
+{% extends 'tyre_stock/base.html' %}
+{% block body_block %}
+{% load multiplication %}
+
+<div class="container-fluid">
+
+
+    <br>
+
+
+  <!--  <h4>Filter</h4>
+    <form method="get">
+
+      {{ filter.form.as_ul }}
+
+
+      <input type="submit" name="" value="Search">
+
+    </form>-->
+
+
+  <div class='jumbotron'>
+    <h2 align="center">Order report</h2>
+    <h4 align="center">You can find the records of customers' transaction here</h4>
+
+    <button id="ex" class="btn btn-primary" onclick="tableToExcel(
+        'table')">
+        Export to Excel
+    </button>
+
+
+
+    <input class="btn btn-warning" type="button" value="Create PDF"
+            id="btPrint" onclick="Export()" />
+
+
+            <button type="button" class="btn btn-light" data-toggle="collapse" data-target="#fil"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path fill-rule="evenodd" d="M11.5 7a4.499 4.499 0 11-8.998 0A4.499 4.499 0 0111.5 7zm-.82 4.74a6 6 0 111.06-1.06l3.04 3.04a.75.75 0 11-1.06 1.06l-3.04-3.04z"></path></svg></button>
+                <div id="fil" class="collapse">
+                  <br><br>
+                    <form method="get">
+                        <h4>Filter</h4>
+                        {{ filter.form.as_ul }}
+                        <input type="submit" name="" value="Search">
+                      </form>
+                  </div>
+
+    <br><br>
+
+    <h5>Money lent: {{x}}</h5>
+    <br>
+    <table id='table'>
+      <thead>
+        <th>Order number</th>
+        <th>Name of the customer</th>
+        <th>Tyre Model</th>
+        <th>Quantity</th>
+        <th>Tyre Price</th>
+        <th>Total Price</th>
+        <th>Date</th>
+        <th>Location</th>
+        <th>Vehicle Number</th>
+      </thead>
+      {% for or in filter.qs %}
+      {% if or.payment_done == False %}
+      <tr style="background-color:#FFFF00">
+        <td onclick="location.href='{{or.id}}'">{{or.id}}</td>
+        <td onclick="location.href='{{or.id}}'" >{{or.customer_name}}</td>
+        <td>{{or.tyre_model}}</td>
+        <td>{{or.quantity}}</td>
+        <td>{{or.tyre_model.price}}</td>
+        <td>{% multiply or.tyre_model.price or.quantity %}</td>
+        <td>{{or.date}}</td>
+        <td>{{or.location}}</td>
+        <td>{{or.vehicle_number}}</td>
+      </tr>
+      {% else %}
+      <tr>
+        <td onclick="location.href='{{or.id}}'">{{or.id}}</td>
+        <td onclick="location.href='{{or.id}}'" >{{or.customer_name}}</td>
+        <td>{{or.tyre_model}}</td>
+        <td>{{or.quantity}}</td>
+        <td>{{or.tyre_model.price}}</td>
+        <td>{% multiply or.tyre_model.price or.quantity %}</td>
+        <td>{{or.date}}</td>
+        <td>{{or.location}}</td>
+        <td>{{or.vehicle_number}}</td>
+      </tr>
+      {% endif %}
+      {% endfor %}
+    </table>
+
+
+  </div>
+</div>
+
+<script>
+
+ $("#ex").click(function () {
+    $("#table").table2excel({
+        filename: "Orders.xls"
+    });
+ });
+
+</script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.22/pdfmake.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+<script type="text/javascript">
+    function Export() {
+        html2canvas(document.getElementById('table'), {
+            onrendered: function (canvas) {
+                var data = canvas.toDataURL();
+                var docDefinition = {
+                    content: [{
+                        image: data,
+                        width: 500
+                    }]
+                };
+                pdfMake.createPdf(docDefinition).download("Orders.pdf");
+            }
+        });
+    }
+</script>
+
+{% endblock %}

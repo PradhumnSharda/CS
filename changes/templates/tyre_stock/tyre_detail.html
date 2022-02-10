@@ -1,0 +1,18 @@
+{% extends 'tyre_stock/base.html' %}
+{% block body_block %}
+
+<div class="container-fluid">
+  <div class="jumbotron">
+    <br>
+      <h4>Name of tyre: {{tyre_detail.tyre_name}}</h4>
+      <h5>Price of the tyre: {{tyre_detail.price}}</h5>
+      <h5>Current stock: {{tyre_detail.number_of_tyres}}</h5>
+      <h5>Last edit: {{tyre_detail.date_refreshed}}</h5>
+      <p></p>
+      <p><a class='btn btn-warning' href="{% url 'tyre_stock:tyre_update' pk=tyre_detail.pk %}">Update</a></p>
+      <p><a class='btn btn-danger' href="{% url 'tyre_stock:tyre_delete' pk=tyre_detail.pk %}">Delete</a></p>
+  </div>
+</div>
+
+
+{% endblock %}
